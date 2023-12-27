@@ -4,6 +4,9 @@ import ApiError from './helpers/ApiError';
 import httpStatus from 'http-status';
 import { errorConverter, errorHandler } from './middlewares/error';
 
+// API routes:
+import routes from './routes/index';
+
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -14,6 +17,8 @@ app.use(cors());
 app.get('/api/test', async (req, res) => {
   res.status(200).send('Congratulations!Typescript API is working!');
 });
+
+app.use('/api', routes);
 
 // send back a 404 error for any unknown api request
 app.use((req: Request, res: Response, next: NextFunction) => {

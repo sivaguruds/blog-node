@@ -1,3 +1,4 @@
+
 export default class ApiError extends Error {
   statusCode: number;
 

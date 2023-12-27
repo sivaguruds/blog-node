@@ -7,6 +7,6 @@ export declare type userEntity = {
   password: string;
   status: boolean;
   role: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 };

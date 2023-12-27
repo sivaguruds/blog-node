@@ -1,5 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize';
 import { sequelize } from '../connection';
+import user_token from './user_token';
 
 export class user extends Model<InferAttributes<user>, InferCreationAttributes<user>> {
   declare id: CreationOptional<number>;
@@ -62,5 +63,16 @@ user.init(
   },
   { sequelize, tableName: 'users', timestamps: true },
 );
+
+user.hasOne(user_token, {
+  foreignKey: 'userId',
+  sourceKey: 'id',
+  as: 'user_tokens',
+});
+
+user_token.belongsTo(user, {
+  foreignKey: 'userId',
+  as: 'users',
+});
 
 export default user;
