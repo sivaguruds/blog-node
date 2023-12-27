@@ -6,6 +6,7 @@ import { logger } from '../helpers/logger';
 import { passwordHash } from '../helpers/passwordSalt';
 import responseHandler from '../helpers/responseHandler';
 import { userEntity } from '../types/user';
+import { RegisterSucessEmail } from '../utils/email';
 
 /**
  * Create a new user with the given request body.
@@ -38,15 +39,18 @@ export const createUser = async (reqBody: userEntity) => {
     };
 
     // Create the user in the database
-    const createdUser = await user.create(userObject);
+    let createdUser = await user.create(userObject);
 
     // Remove the password from the created user object
-    const cleanUser = _.omit(createdUser, 'password');
+    const cleanUser = _.omit(createdUser.get(), ['password']);
 
     // Check if the user was not created successfully
     if (!createdUser) {
       return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Registration Failed! Please try again.');
     }
+
+    // Create user send email function
+    RegisterSucessEmail(cleanUser.email, cleanUser.firstName);
 
     // Return the success response with the created user object
     return responseHandler.returnSuccess(httpStatus.OK, 'Successfully Registered the account!', cleanUser);

@@ -15,9 +15,9 @@ export const register = async (req: Request, res: Response) => {
     const { message, data, code, status } = newUser.response;
 
     // Send the response with status, message, and data
-    res.status(newUser.statusCode).send({ status, message, data });
+    return res.status(newUser.statusCode).send({ status, message, data });
   } catch (error) {
     // Send an error response with the error object as the body
-    res.status(httpStatus.BAD_GATEWAY).send(error);
+    return res.status(httpStatus.BAD_GATEWAY).send(error);
   }
 };

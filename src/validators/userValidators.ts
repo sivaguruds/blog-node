@@ -19,7 +19,12 @@ export const userCreateValidator = async (req: Request, res: Response, next: Nex
       .pattern(/^[0-9]+$/)
       .required(),
     email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    password: Joi.string()
+      .pattern(
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
+        'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character',
+      )
+      .required(),
     role: Joi.string().valid('admin', 'viewer').required(),
     status: Joi.boolean().valid(true).required(),
   });
