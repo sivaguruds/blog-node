@@ -1,11 +1,12 @@
 import httpStatus from 'http-status';
 import _ from 'lodash';
 import user from '../database/models/user';
+import { genToken } from '../helpers/genToken';
 import { isEmailExists } from '../helpers/isEmailExists';
 import { logger } from '../helpers/logger';
-import { passwordHash } from '../helpers/passwordSalt';
+import { comparePassword, passwordHash } from '../helpers/passwordSalt';
 import responseHandler from '../helpers/responseHandler';
-import { userEntity } from '../types/user';
+import { userEntity, userLoginEntity } from '../types/user';
 import { RegisterSucessEmail } from '../utils/email';
 
 /**
@@ -56,6 +57,41 @@ export const createUser = async (reqBody: userEntity) => {
     return responseHandler.returnSuccess(httpStatus.OK, 'Successfully Registered the account!', cleanUser);
   } catch (error) {
     // Return the error response if any error occurs
+    return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+  }
+};
+
+/**
+ * Log in a user with the given email and password.
+ * @param {Object} reqBody - The request body containing the user's email and password.
+ * @returns {Object} The response object.
+ */
+export const loginUser = async (reqBody: userLoginEntity) => {
+  try {
+    const { email, password } = reqBody;
+
+    // Find the user with the given email
+    let userFind: any = await user.findOne({ where: { email } });
+    if (!userFind) {
+      return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Invalid Email or Password');
+    }
+
+    // Check if the password matches
+    const isPasswordMatch = await comparePassword(password, userFind.password);
+    if (!isPasswordMatch) {
+      return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Invalid password');
+    }
+
+    // Generate a token for the user
+    const token = await genToken(userFind);
+    const cleanUser = _.omit(userFind.get(), ['password']);
+
+    // Return the response with the user details and access token
+    return responseHandler.returnSuccess(httpStatus.OK, 'Login Successful', {
+      ...cleanUser,
+      accessToken: token,
+    });
+  } catch (error) {
     return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
   }
 };

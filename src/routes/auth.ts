@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { register } from '../controllers/auth.controller';
-import { userCreateValidator } from '../validators/userValidators';
+import { adminBoard, login, register, viewerBoard } from '../controllers/auth.controller';
+import { isAdmin, isUser, verifyToken } from '../middlewares/authJwt';
+import { userCreateValidator, userLoginValidator } from '../validators/userValidators';
 
 const router = Router();
 
@@ -114,5 +115,8 @@ const router = Router();
  */
 
 router.post('/register', userCreateValidator, register);
+router.post('/login', userLoginValidator, login);
+router.get('/admin', verifyToken, isAdmin, adminBoard);
+router.get('/viewer', verifyToken, isUser, viewerBoard);
 
 export default router;

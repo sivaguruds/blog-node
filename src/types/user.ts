@@ -10,3 +10,8 @@ export declare type userEntity = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export declare type userLoginEntity = {
+  email: string;
+  password: string;
+};
