@@ -1,6 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { userEntity } from '../types/user';
 
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 /**
  * Generates a token for the given user.
  *
@@ -15,7 +19,7 @@ export const genToken = async (user: userEntity): Promise<string> => {
   const token = await jwt.sign({ id: user.id, role: user.role }, configJwtKey, {
     algorithm: 'HS256',
     allowInsecureKeySizes: true,
-    expiresIn: '10m', // 10 minutes
+    expiresIn: '1m', // 1 minutes
   });
 
   // Return the generated token

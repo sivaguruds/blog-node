@@ -1,5 +1,6 @@
 import httpStatus from 'http-status';
 import _ from 'lodash';
+import refresh_token from '../database/models/refresh_token';
 import user from '../database/models/user';
 import { genToken } from '../helpers/genToken';
 import { isEmailExists } from '../helpers/isEmailExists';
@@ -86,10 +87,45 @@ export const loginUser = async (reqBody: userLoginEntity) => {
     const token = await genToken(userFind);
     const cleanUser = _.omit(userFind.get(), ['password']);
 
+    let refreshToken = await refresh_token.createToken(cleanUser);
+    logger.info(refreshToken);
+
     // Return the response with the user details and access token
     return responseHandler.returnSuccess(httpStatus.OK, 'Login Successful', {
       ...cleanUser,
       accessToken: token,
+      refreshToken: refreshToken,
+    });
+  } catch (error) {
+    return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+  }
+};
+
+export const refresh = async (reqBody: any) => {
+  const { refreshToken } = reqBody;
+
+  if (!refreshToken) {
+    return responseHandler.returnError(httpStatus.FORBIDDEN, 'Refresh Token is required!');
+  }
+
+  try {
+    const token = await refresh_token.findOne({ where: { token: refreshToken } });
+
+    if (!token) {
+      return responseHandler.returnError(httpStatus.FORBIDDEN, 'Invalid refresh token');
+    }
+
+    if (refresh_token.verifyExpiration(token.toJSON())) {
+      refresh_token.destroy({ where: { id: token.toJSON().id } });
+      return responseHandler.returnError(httpStatus.FORBIDDEN, 'Refresh token was expired. Please make a new sign in request');
+    }
+
+    const userRecord: any = await user.findOne({ where: { id: token.toJSON().userId } });
+    const newAccessToken = await genToken(userRecord);
+
+    return responseHandler.returnSuccess(httpStatus.OK, 'Access Token generated Successful', {
+      accessToken: newAccessToken,
+      refreshToken: token.toJSON().token,
     });
   } catch (error) {
     return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');

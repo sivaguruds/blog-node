@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { adminBoard, login, register, viewerBoard } from '../controllers/auth.controller';
+import { adminBoard, login, refreshToken, register, viewerBoard } from '../controllers/auth.controller';
 import { isAdmin, isUser, verifyToken } from '../middlewares/authJwt';
 import { userCreateValidator, userLoginValidator } from '../validators/userValidators';
 
@@ -116,6 +116,7 @@ const router = Router();
 
 router.post('/register', userCreateValidator, register);
 router.post('/login', userLoginValidator, login);
+router.post('/refresh-token', refreshToken);
 router.get('/admin', verifyToken, isAdmin, adminBoard);
 router.get('/viewer', verifyToken, isUser, viewerBoard);
 

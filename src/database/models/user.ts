@@ -1,5 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize';
 import { sequelize } from '../connection';
+import refresh_token from './refresh_token';
 import user_token from './user_token';
 
 export class user extends Model<InferAttributes<user>, InferCreationAttributes<user>> {
@@ -70,7 +71,18 @@ user.hasOne(user_token, {
   as: 'user_tokens',
 });
 
+user.hasOne(refresh_token, {
+  foreignKey: 'userId',
+  sourceKey: 'id',
+  as: 'refresh_tokens',
+});
+
 user_token.belongsTo(user, {
+  foreignKey: 'userId',
+  as: 'users',
+});
+
+refresh_token.belongsTo(user, {
   foreignKey: 'userId',
   as: 'users',
 });

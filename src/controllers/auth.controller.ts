@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
-import { createUser, loginUser } from '../services/auth.services';
+import { createUser, loginUser, refresh } from '../services/auth.services';
 import { ApiServiceResponse } from '../types/apiServiceResponse';
 
 /**
@@ -48,4 +48,15 @@ export const viewerBoard = async (req: Request, res: Response) => {
   return res.status(201).send({
     message: 'Viewer Content.',
   });
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    const { response, statusCode } = await refresh(req.body);
+    const { message, data, code, status } = response;
+
+    return res.status(statusCode).send({ status, message, data });
+  } catch (error) {
+    return res.status(httpStatus.BAD_GATEWAY).send(error);
+  }
 };
