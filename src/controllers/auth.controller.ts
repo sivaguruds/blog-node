@@ -1,15 +1,9 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
-import { createUser, loginUser, refresh } from '../services/auth.services';
+import { logger } from '../helpers/logger';
+import { createUser, forgot, loginUser, refresh, reset } from '../services/auth.services';
 import { ApiServiceResponse } from '../types/apiServiceResponse';
 
-/**
- * Registers a new user.
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @return {Promise<void>} The response with status, message, and data.
- */
 export const register = async (req: Request, res: Response) => {
   try {
     const newUser: ApiServiceResponse = await createUser(req.body);
@@ -21,12 +15,6 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Handles the login request.
- *
- * @param req The HTTP request object.
- * @param res The HTTP response object.
- */
 export const login = async (req: Request, res: Response) => {
   try {
     const { response, statusCode } = await loginUser(req.body);
@@ -56,6 +44,26 @@ export const refreshToken = async (req: Request, res: Response) => {
     const { message, data, code, status } = response;
 
     return res.status(statusCode).send({ status, message, data });
+  } catch (error) {
+    return res.status(httpStatus.BAD_GATEWAY).send(error);
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { statusCode, response }: ApiServiceResponse | any = await forgot(req.body);
+    const { message, code, status } = response;
+    return res.status(statusCode).send({ status, message });
+  } catch (error) {
+    return res.status(httpStatus.BAD_GATEWAY).send(error);
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { statusCode, response }: ApiServiceResponse | any = await reset(req.body);
+    const { message, code, status } = response;
+    return res.status(statusCode).send({ status, message });
   } catch (error) {
     return res.status(httpStatus.BAD_GATEWAY).send(error);
   }

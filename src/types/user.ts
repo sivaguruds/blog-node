@@ -15,3 +15,9 @@ export declare type userLoginEntity = {
   email: string;
   password: string;
 };
+
+export declare type Token = {
+  id?: string;
+  userId: any;
+  token: string;
+};
