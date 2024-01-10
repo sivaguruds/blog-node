@@ -6,7 +6,7 @@ import { tagCreateValidator } from '../validators/postValidators';
 const router = Router();
 
 router.get('', verifyToken, isAdmin, tagGetAll);
-router.post('/create', tagCreateValidator, verifyToken, isAdmin, tagCreate);
+router.post('', tagCreateValidator, verifyToken, isAdmin, tagCreate);
 router.patch('/:id', tagCreateValidator, verifyToken, isAdmin, tagUpdate);
 router.delete('/:id', verifyToken, isAdmin, tagDelete);
 

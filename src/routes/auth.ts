@@ -76,7 +76,7 @@ const router = Router();
  * @swagger
  * tags:
  *   name: User
- *   description: New user API
+ *   description: User API
  * /auth/register:
  *   post:
  *     summary: Create a new user
@@ -103,7 +103,7 @@ const router = Router();
  *                  status:
  *                      type: boolean
  *     responses:
- *       200:
+ *       201:
  *         description: Successfully Registered the account!.
  *         content:
  *           application/json:

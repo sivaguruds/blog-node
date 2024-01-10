@@ -19,7 +19,7 @@ export const genToken = async (user: userEntity): Promise<string> => {
   const token = await jwt.sign({ id: user.id, role: user.role }, configJwtKey, {
     algorithm: 'HS256',
     allowInsecureKeySizes: true,
-    expiresIn: '10m', // 10 minutes
+    expiresIn: '30m', // 10 minutes
   });
 
   // Return the generated token
