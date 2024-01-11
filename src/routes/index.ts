@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import authRoute from './auth';
 import category from './category';
 import tag from './tag';
+import upload from './upload';
 
 const router = Router();
 
@@ -17,6 +18,10 @@ const defaultRoute = [
   {
     path: '/tag',
     route: tag,
+  },
+  {
+    path: '/upload',
+    route: upload,
   },
 ];
 

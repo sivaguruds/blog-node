@@ -3,12 +3,6 @@ import { Request, Response, NextFunction } from 'express';
 import ApiError from '../helpers/ApiError';
 import httpStatus from 'http-status';
 
-/**
- * Validates the request body for creating a user
- * @param req - The request object
- * @param res - The response object
- * @param next - The next middleware function
- */
 export const userCreateValidator = async (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
     firstName: Joi.string().required(),
@@ -45,14 +39,6 @@ export const userCreateValidator = async (req: Request, res: Response, next: Nex
   }
 };
 
-/**
- * Validates the user login request.
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @param {NextFunction} next - The next middleware function.
- * @return {void}
- */
 export const userLoginValidator = (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
