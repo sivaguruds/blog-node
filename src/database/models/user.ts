@@ -1,5 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize';
 import { sequelize } from '../connection';
+import post from './post';
 import refresh_token from './refresh_token';
 import user_token from './user_token';
 
@@ -83,6 +84,17 @@ user_token.belongsTo(user, {
 });
 
 refresh_token.belongsTo(user, {
+  foreignKey: 'userId',
+  as: 'users',
+});
+
+user.hasMany(post, {
+  foreignKey: 'userId',
+  sourceKey: 'id',
+  as: 'posts',
+});
+
+post.belongsTo(user, {
   foreignKey: 'userId',
   as: 'users',
 });

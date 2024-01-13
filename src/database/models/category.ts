@@ -1,5 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize';
 import { sequelize } from '../connection';
+import post from './post';
 
 export class category extends Model<InferAttributes<category>, InferCreationAttributes<category>> {
   declare id: CreationOptional<number>;
@@ -34,5 +35,16 @@ category.init(
   },
   { sequelize, tableName: 'categories', timestamps: true },
 );
+
+category.hasMany(post, {
+  foreignKey: 'categoryId',
+  sourceKey: 'id',
+  as: 'posts',
+});
+
+post.belongsTo(category, {
+  foreignKey: 'categoryId',
+  as: 'categories',
+});
 
 export default category;

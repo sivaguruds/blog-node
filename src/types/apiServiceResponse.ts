@@ -14,3 +14,5 @@ export declare type DataTableResponse = {
   totalPages: number;
   currentPage: number;
 };
+
+export declare type DataTableDaoResponse = { count: number; rows: Partial<object[]> };

@@ -3,6 +3,7 @@ import authRoute from './auth';
 import category from './category';
 import tag from './tag';
 import upload from './upload';
+import post from './post';
 
 const router = Router();
 
@@ -22,6 +23,10 @@ const defaultRoute = [
   {
     path: '/upload',
     route: upload,
+  },
+  {
+    path: '/post',
+    route: post,
   },
 ];
 

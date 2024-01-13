@@ -1,4 +1,4 @@
-import { ApiServiceResponse } from '../types/apiServiceResponse';
+import { ApiServiceResponse, DataTableDaoResponse, DataTableResponse } from '../types/apiServiceResponse';
 
 /**
  * Returns a success response object.
@@ -42,4 +42,18 @@ const returnError = (statusCode: number, message: string) => {
   return response;
 };
 
-export default { returnSuccess, returnError };
+const getPaginationData = (rows: DataTableDaoResponse, page: number, limit: number) => {
+  const { count: totalItems, rows: data } = rows;
+  const currentPage = page ? +page : 0;
+  const totalPages = Math.ceil(totalItems / limit);
+
+  const response: DataTableResponse = {
+    totalItems,
+    data,
+    totalPages,
+    currentPage,
+  };
+  return response;
+};
+
+export default { returnSuccess, returnError, getPaginationData };

@@ -1,29 +1,13 @@
 import Joi, { valid } from 'joi';
 import { Request, Response, NextFunction } from 'express';
-import ApiError from '../helpers/ApiError';
-import httpStatus from 'http-status';
+import { validationRequest } from '../helpers/validationRequest';
 
 export const categoryCreateValidator = async (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     description: Joi.string().required(),
   });
-
-  const options = {
-    abortEarly: false,
-    allowUnknown: true,
-    stripUnknown: true,
-  };
-
-  const { error, value } = schema.validate(req.body, options);
-
-  if (error) {
-    const errorMessage = error.details.map((details) => details.message).join(', ');
-    next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
-  } else {
-    req.body = value;
-    return next();
-  }
+  validationRequest(req, res, next, schema);
 };
 
 export const tagCreateValidator = async (req: Request, res: Response, next: NextFunction) => {
@@ -31,20 +15,35 @@ export const tagCreateValidator = async (req: Request, res: Response, next: Next
     name: Joi.string().required(),
     description: Joi.string().required(),
   });
+  validationRequest(req, res, next, schema);
+};
 
-  const options = {
-    abortEarly: false,
-    allowUnknown: true,
-    stripUnknown: true,
-  };
+export const postCreateValidator = async (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object({
+    title: Joi.string().required(),
+    subTitle: Joi.string().required(),
+    userId: Joi.string().required(),
+    image: Joi.string().required(),
+    content: Joi.string().required(),
+    categoryId: Joi.string().required(),
+    tags: Joi.array().min(1).required(),
+  });
+  validationRequest(req, res, next, schema);
+};
 
-  const { error, value } = schema.validate(req.body, options);
+export const postQueryValidator = async (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object().keys({
+    page: Joi.number().required(),
+    size: Joi.number().required(),
+  });
+  console.log(req);
+  validationRequest(req, res, next, schema, 'query');
+};
 
-  if (error) {
-    const errorMessage = error.details.map((details) => details.message).join(', ');
-    next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
-  } else {
-    req.body = value;
-    return next();
-  }
+export const postParamsValidator = async (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object().keys({
+    id: Joi.string().required(),
+  });
+  console.log(req);
+  validationRequest(req, res, next, schema, 'params');
 };

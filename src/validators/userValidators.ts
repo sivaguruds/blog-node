@@ -1,7 +1,6 @@
 import Joi, { valid } from 'joi';
 import { Request, Response, NextFunction } from 'express';
-import ApiError from '../helpers/ApiError';
-import httpStatus from 'http-status';
+import { validationRequest } from '../helpers/validationRequest';
 
 export const userCreateValidator = async (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
@@ -22,21 +21,7 @@ export const userCreateValidator = async (req: Request, res: Response, next: Nex
     status: Joi.boolean().valid(true).required(),
   });
 
-  const options = {
-    abortEarly: false,
-    allowUnknown: true,
-    stripUnknown: true,
-  };
-
-  const { error, value } = schema.validate(req.body, options);
-
-  if (error) {
-    const errorMessage = error.details.map((details) => details.message).join(', ');
-    next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
-  } else {
-    req.body = value;
-    return next();
-  }
+  validationRequest(req, res, next, schema);
 };
 
 export const userLoginValidator = (req: Request, res: Response, next: NextFunction) => {
@@ -50,19 +35,5 @@ export const userLoginValidator = (req: Request, res: Response, next: NextFuncti
       .required(),
   });
 
-  const options = {
-    abortEarly: false,
-    allowUnknown: true,
-    stripUnknown: true,
-  };
-
-  const { error, value } = schema.validate(req.body, options);
-
-  if (error) {
-    const errorMessage = error.details.map((details) => details.message).join(', ');
-    next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
-  } else {
-    req.body = value;
-    next();
-  }
+  validationRequest(req, res, next, schema);
 };
