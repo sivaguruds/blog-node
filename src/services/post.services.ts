@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+import { Op } from 'sequelize';
 import category from '../database/models/category';
 import post from '../database/models/post';
 import post_tag from '../database/models/post_tag';
@@ -54,7 +55,8 @@ export const create = async (reqBody: posts) => {
  * @returns A response object indicating the success or failure of the operation.
  */
 export const getAll = async (query: any) => {
-  const { page, size } = query;
+  const { page, size, title } = query;
+  const condition = title ? { title: { [Op.like]: `%${title}%` } } : {};
 
   try {
     // Get the limit and offset for pagination
@@ -62,6 +64,7 @@ export const getAll = async (query: any) => {
 
     // Retrieve all posts with pagination, including tag news and categories
     const allPosts = await post.findAndCountAll({
+      where: condition,
       limit,
       offset,
       include: [
@@ -184,6 +187,22 @@ export const details = async (id: string) => {
     return responseHandler.returnSuccess(httpStatus.OK, 'Successfully fetched post details!', postDetails);
   } catch (error) {
     // Return an error response if there is an error
+    return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+  }
+};
+
+export const getCategoryByPost = async (query: any) => {
+  const { categoryId } = query;
+  try {
+    const postDetails: any = await post.findAll({
+      where: { categoryId: categoryId },
+      include: [
+        { model: category, as: 'categories', attributes: ['name'] },
+        { model: tag_new, as: 'tag_news', attributes: ['name'] },
+      ],
+    });
+    return responseHandler.returnSuccess(httpStatus.OK, 'Successfully fetched post!', postDetails);
+  } catch (error) {
     return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
   }
 };
