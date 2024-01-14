@@ -1,5 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize';
 import { sequelize } from '../connection';
+import post_like from './post_like';
 import post_tag from './post_tag';
 import tag_new from './tag_new';
 
@@ -77,6 +78,17 @@ tag_new.belongsToMany(post, {
   through: post_tag,
   as: 'posts',
   foreignKey: 'tagId',
+});
+
+post.hasMany(post_like, {
+  foreignKey: 'postId',
+  as: 'post_likes',
+  sourceKey: 'id',
+});
+
+post_like.belongsTo(post, {
+  foreignKey: 'postId',
+  as: 'posts',
 });
 
 export default post;

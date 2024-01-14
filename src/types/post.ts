@@ -25,3 +25,10 @@ export declare type postTags = {
   postId: any;
   tagId: string;
 };
+
+export declare type postLike = {
+  id?: string;
+  postId: string;
+  userId: string;
+  status: boolean;
+};
