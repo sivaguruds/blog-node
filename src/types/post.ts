@@ -32,3 +32,12 @@ export declare type postLike = {
   userId: string;
   status: boolean;
 };
+
+export declare type postComment = {
+  id?: string;
+  postId: string;
+  name: string;
+  comment: string;
+  email: string;
+  status: boolean;
+};

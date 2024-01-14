@@ -1,7 +1,12 @@
 import httpStatus from 'http-status';
 import category from '../database/models/category';
+import { QueryTypes } from '@sequelize/core';
+import post from '../database/models/post';
 import responseHandler from '../helpers/responseHandler';
 import { categories } from '../types/post';
+import { logger } from '../helpers/logger';
+
+import { sequelize } from '../database/connection';
 
 /**
  * Create a new category.
@@ -99,6 +104,20 @@ export const deleteById = async (id: string) => {
     return responseHandler.returnSuccess(httpStatus.OK, 'Category deleted!');
   } catch (error) {
     // Return an error message if something goes wrong
+    return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+  }
+};
+
+export const categoryCount = async () => {
+  try {
+    const categoryCount = await sequelize.query(
+      'SELECT categories.name AS category , COUNT("posts"."categoryId") AS total FROM categories LEFT JOIN posts ON "categories"."id" = "posts"."categoryId" GROUP BY "categories"."id";;',
+      {
+        type: QueryTypes.SELECT,
+      },
+    );
+    return responseHandler.returnSuccess(httpStatus.OK, 'Successfully fetched category count!', categoryCount);
+  } catch (error) {
     return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
   }
 };

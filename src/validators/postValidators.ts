@@ -47,3 +47,14 @@ export const postParamsValidator = async (req: Request, res: Response, next: Nex
   console.log(req);
   validationRequest(req, res, next, schema, 'params');
 };
+
+export const postCommentValidator = async (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object().keys({
+    postId: Joi.string().required(),
+    name: Joi.string().required(),
+    comment: Joi.string().required(),
+    email: Joi.string().required(),
+    status: Joi.boolean().required(),
+  });
+  validationRequest(req, res, next, schema, 'body');
+};

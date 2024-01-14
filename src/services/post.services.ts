@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import { Op } from 'sequelize';
 import category from '../database/models/category';
 import post from '../database/models/post';
+import { post_comment } from '../database/models/post_comment';
 import post_tag from '../database/models/post_tag';
 import tag_new from '../database/models/tag_new';
 import { getPagination } from '../helpers/getpagination';
@@ -180,6 +181,7 @@ export const details = async (id: string) => {
       include: [
         { model: tag_new, as: 'tag_news', attributes: ['name'] },
         { model: category, as: 'categories', attributes: ['name'] },
+        { model: post_comment, as: 'post_comments', attributes: ['name', 'email', 'comment', 'status'] },
       ],
     });
 
@@ -206,6 +208,8 @@ export const getCategoryByPost = async (query: any) => {
     return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
   }
 };
+
+
 
 const isPostExists = async (id: string) => {
   const postExists = await post.findOne({ where: { id } });
